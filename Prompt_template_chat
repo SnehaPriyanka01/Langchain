@@ -1,0 +1,52 @@
+# Import necessary libraries
+from langchain.prompts import ChatPromptTemplate
+from langchain.chains import LLMChain
+from langchain_ollama.chat_models import ChatOllama
+from langchain_core.messages import HumanMessage
+
+# Initialize the Ollama model
+model = ChatOllama(base_url='https://ollama.dealwallet.com', model='llama3')
+
+# Define a prompt template for a conversation with the chat model
+# In this case, the AI plays the role of a travel guide
+template = """
+You are an expert travel guide.
+Human: I am planning a trip to {destination}. Can you recommend some activities?
+Assistant:
+"""
+prompt_template = ChatPromptTemplate.from_template(template)
+
+# Example of using the template with a destination placeholder
+prompt = prompt_template.invoke({"destination": "Paris"})
+print("\n----- Generated Prompt -----\n")
+print(prompt)
+
+# Create the LLMChain with the prompt and Ollama model
+llm_chain = LLMChain(llm=model, prompt=prompt_template)
+
+# Example user input: Destination is 'Paris'
+response = llm_chain.run({"destination": "Paris"})
+
+# Print the AI's response based on the template
+print("\n----- AI Response -----\n")
+print(response)
+
+# More complex template with multiple placeholders (e.g., for more personalized conversation)
+template_multiple = """
+You are an expert travel guide.
+Human: I am planning a {adjective} trip to {destination}. Can you recommend some {activity_type} activities?
+Assistant:
+"""
+prompt_template_multiple = ChatPromptTemplate.from_template(template_multiple)
+
+# Use the template with placeholders
+prompt = prompt_template_multiple.invoke({"adjective": "relaxing", "destination": "Bali", "activity_type": "outdoor"})
+print("\n----- Generated Prompt with Multiple Placeholders -----\n")
+print(prompt)
+
+# Run the chain with multiple placeholders
+response_multiple = llm_chain.run({"adjective": "relaxing", "destination": "Bali", "activity_type": "outdoor"})
+
+# Print the AI's response based on the more complex prompt
+print("\n----- AI Response for Multiple Placeholders -----\n")
+print(response_multiple)
